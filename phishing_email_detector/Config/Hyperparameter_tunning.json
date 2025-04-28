@@ -1,0 +1,12 @@
+{
+    "random_forest": {
+        "n_estimators": 100,
+        "max_depth": 20,
+        "min_samples_split": 5
+    },
+    "svm": {
+        "C": 1.0,
+        "kernel": "rbf",
+        "gamma": "scale"
+    }
+}

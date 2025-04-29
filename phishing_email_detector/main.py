@@ -4,7 +4,7 @@ import argparse
 from feature_extraction_engine import extract_features
 
 def load_model():
-    """Load the trained model and vectorizer"""
+    """Load the trained model and vectorizer""" # using trainned model ? 
     try:
         model_data = joblib.load("Models_data/Trained_model.pkl")
         model = model_data["model"]
@@ -63,7 +63,7 @@ def main():
     else:
         # Interactive mode
         print("Paste the email content below and press Ctrl+D (Unix) or Ctrl+Z (Windows) when finished:")
-        email_lines = []
+        email_lines = []  #TODO make an good while loop structure for command line interaction unit 
         try:
             while True:
                 line = input()

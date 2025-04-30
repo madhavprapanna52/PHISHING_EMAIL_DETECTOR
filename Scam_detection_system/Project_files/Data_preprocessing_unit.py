@@ -21,8 +21,12 @@ import matplotlib.pyplot as plt
 import csv 
 
 # Loading data 
-data_set = pd.read_csv('/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Data_set/Phishing_Email.csv')  # working till 1000
+data_set = pd.read_csv('/home/madhavr/Desktop/Yantragya_project_1.0/Data_set.csv')  # working till 1000
 data_set = data_set.dropna()
+
+# cleanning data set through manual pic 
+
+
 # cleanning dataset 
 def clean_text(text, use_stemming=False):
     """
@@ -30,8 +34,9 @@ def clean_text(text, use_stemming=False):
     removing elements = [punctuations , html, rare words, too frquent_word, irrelevent specials]
     """
     # processing emails --
-    if type(text) == 'nan':
-        return ''
+    
+
+
     soup = BeautifulSoup(text, 'html.parser')
     text = soup.get_text(separator='\n') # concatination with new line 
     text = re.sub(r'[^a-zA-Z0-9\s.,?!-]', '', text).strip()
@@ -54,20 +59,15 @@ def clean_text(text, use_stemming=False):
 
 with open('/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Data_set/Cleanned_dataset.csv', 'w') as cleaned_dataset:
     writer = csv.writer(cleaned_dataset)
-    writer.writerow(data_set.head(1)[1:])
+    head = ('Email Text','Email Type')
+    writer.writerow(head)
 
     for index, row in data_set.iterrows():
-        print('_'*50)
         text = row['Email Text']
-        print('email Text' + '-'*50)
-        print(text)
-        label = row["Email Type"]
+        label = row["Label"]
         processed_text = clean_text(text)
-        print('processed text', '+'*50)
-        print(processed_text)
         e = [processed_text, label]
         writer.writerow(e)
-        print(f'element to write : {e}')
 
 d = pd.read_csv('/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Data_set/Cleanned_dataset.csv')
 print(d.head(20))

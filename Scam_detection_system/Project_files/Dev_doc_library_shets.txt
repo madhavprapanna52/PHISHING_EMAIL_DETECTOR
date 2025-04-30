@@ -1,1 +1,29 @@
-/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Project_files
+# Making bag of words 
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+
+# Bag of Words
+vectorizer = CountVectorizer(stop_words='english', max_features=3000)  # limit to top 3000 words
+X = vectorizer.fit_transform(df['Email Text'])
+
+# Target
+y = df['Email Type']
+
+# Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# train logistic regression model 
+from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# performence 
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+y_pred = model.predict(X_test)
+
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))

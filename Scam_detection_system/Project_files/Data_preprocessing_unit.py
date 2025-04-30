@@ -1,74 +1,80 @@
 '''
-Data preprocesssing unit 
-    1. Cleanning dataset 
-    2. Processing with obvious intellegence text engines for reducing data load
-    3. Stemming , lemmatisation , tokenising words
+Data preprocessing unit 
+    1. Cleaning dataset 
+    2. Processing with obvious intelligence text engines for reducing data load
+    3. Stemming, lemmatization, tokenizing words
 
 Process layout 
 Dataset reading loop for efficiency and crash prevention 
-cleanning dataset through out 
+Cleaning dataset throughout 
 '''
 import pandas as pd
-from My_basic_tool import *
+from My_basic_tool import *  # assuming your own utilities
 import nltk
 import string
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
-from bs4 import BeautifulSoup
 import re
-import matplotlib.pyplot as plt
-import csv 
+import csv
 
-# Loading data 
-data_set = pd.read_csv('/home/madhavr/Desktop/Yantragya_project_1.0/Data_set.csv')  # working till 1000
-data_set = data_set.dropna()
+# Load dataset with safe fallback for NaNs
+file_path = '/home/madhavr/Desktop/Yantragya_project_1.0/Data_set.csv'
+try:
+    data_set = pd.read_csv(file_path)
+    print("Original dataset size:", data_set.shape)
+except Exception as e:
+    print("Failed to read dataset:", e)
+    exit()
 
-# cleanning data set through manual pic 
+# Drop completely empty rows only
+data_set.dropna(subset=['Email Text', 'Email Type'], inplace=True)
 
+# See sample
+print('Checking cleaned dataset:')
+print(data_set.head(5))
 
-# cleanning dataset 
+# Define text cleaning function
 def clean_text(text, use_stemming=False):
     """
-    clean dataset 
-    removing elements = [punctuations , html, rare words, too frquent_word, irrelevent specials]
+    Clean dataset: remove punctuation, HTML, links, unwanted chars.
     """
-    # processing emails --
+    if not isinstance(text, str) or text.strip() == "":
+        return ""
     
-
-
-    soup = BeautifulSoup(text, 'html.parser')
-    text = soup.get_text(separator='\n') # concatination with new line 
-    text = re.sub(r'[^a-zA-Z0-9\s.,?!-]', '', text).strip()
-    text = re.sub(r'http\S+|www\S+|@\S+', '', text)
-    text = text.strip()
-    if isinstance(text, str):
+    try:
+        text = re.sub(r'http\S+|www\S+|@\S+', '', text)
+        text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
         text = text.lower()
-        stop_words = set(stopwords.words('english'))  #  stopwords
         tokens = word_tokenize(text)
-        tokens = [word for word in tokens if not((word in string.punctuation) and (word in stop_words))]  # if word isnt puct/stop - gets further
+        stop_words = set(stopwords.words('english'))
+        tokens = [word for word in tokens if word not in stop_words and word not in string.punctuation]
 
         if use_stemming:
             stemmer = PorterStemmer()
             tokens = [stemmer.stem(word) for word in tokens]
-        return ' '.join(tokens)  # making spaced output tokens 
-    return ''
 
-# Cleanned dataset loading
+        return ' '.join(tokens)
+    
+    except Exception as e:
+        print("Text cleaning error:", e)
+        return ""
 
+# Output file path
+output_file = '/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Data_set/Cleanned_dataset.csv'
 
-with open('/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Data_set/Cleanned_dataset.csv', 'w') as cleaned_dataset:
+# Write cleaned dataset
+with open(output_file, 'w', newline='', encoding='utf-8') as cleaned_dataset:
     writer = csv.writer(cleaned_dataset)
-    head = ('Email Text','Email Type')
-    writer.writerow(head)
+    writer.writerow(['Email Text', 'Email Type'])
 
-    for index, row in data_set.iterrows():
-        text = row['Email Text']
-        label = row["Label"]
-        processed_text = clean_text(text)
-        e = [processed_text, label]
-        writer.writerow(e)
+    for idx, row in data_set.iterrows():
+        text = row.get('Email Text', '')
+        label = row.get('Email Type', '')
 
-d = pd.read_csv('/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Data_set/Cleanned_dataset.csv')
-print(d.head(20))
+        processed_text = clean_text(text, use_stemming=True)
 
+        print('_'*50)
+        print(f'Writing cleaned text: {processed_text[:50]}...')
+
+        writer.writerow([processed_text, label])

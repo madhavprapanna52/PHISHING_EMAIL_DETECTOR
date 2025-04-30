@@ -16,11 +16,7 @@ def has_mean(t):
 def train_and_save_model(data_path: str, model_path: str):
     df = pd.read_csv(data_path)
     # final droping commands for train set 
-    #df = df.dropna(subset=['Email Text', 'Email Type'], inplace=True)
-    df = df.dropna()
-    print(df.head())
-    
-
+    df.dropna(subset=['Email Text', 'Email Type'], inplace=True)
     # Making emails labels 
     df['Email Type'] = df['Email Type'].map({'Safe Email': 0, 'Phishing Email': 1})
     vectorizer = CountVectorizer(stop_words='english', max_features=3000)
@@ -38,4 +34,4 @@ def train_and_save_model(data_path: str, model_path: str):
     joblib.dump(vectorizer, model_path.replace("model", "vectorizer"))
 
 if __name__ == "__main__":
-    train_and_save_model("/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Data_set/Cleanned_dataset.csv", "/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Project_files/logistic_model.pkl")
+    train_and_save_model("/home/madhavr/Desktop/Yantragya_project_1.0/Data_set.csv", "/home/madhavr/Desktop/Yantragya_project_1.0/Scam_detection_system/Project_files/logistic_model.pkl")

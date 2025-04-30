@@ -27,3 +27,20 @@ y_pred = model.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
 print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+
+
+
+-----------------------------------
+
+cleanning logic building for handeling datasets 
+list1 = [1, 2, 3, 4, 5]
+iterator = iter(list1)
+while True:
+    try:
+        x = next(iterator)
+        print(x)
+    except StopIteration:
+        break
+
+
+Scam_detection_system/Data_set/Phishing_Email.csv
